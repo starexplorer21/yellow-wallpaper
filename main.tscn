@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://cu0a6oc2mchu7"]
+[gd_scene load_steps=80 format=3 uid="uid://cu0a6oc2mchu7"]
 
 [ext_resource type="Script" path="res://GameManager.gd" id="1_jhcll"]
 [ext_resource type="Texture2D" uid="uid://ctikq2bo3a64k" path="res://assets/Mystic Woods Asset Pack/tilesets/floors/wooden.png" id="1_nlnev"]
@@ -743,6 +743,21 @@ shader_parameter/alpha = 1.0
 shader_parameter/inner_radius = 0.4
 shader_parameter/outer_radius = 1.4
 
+[sub_resource type="Gradient" id="Gradient_7110u"]
+offsets = PackedFloat32Array(0, 0.776224, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pmfdy"]
+gradient = SubResource("Gradient_7110u")
+
+[sub_resource type="Gradient" id="Gradient_wxhgt"]
+offsets = PackedFloat32Array(0.972028, 1)
+colors = PackedColorArray(0, 1, 0, 1, 0, 1, 0, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_sme7t"]
+gradient = SubResource("Gradient_wxhgt")
+width = 128
+
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_jhcll")
 
@@ -802,7 +817,6 @@ position = Vector2(56, 37.5)
 shape = SubResource("RectangleShape2D_rwn3t")
 
 [node name="Interact" type="Control" parent="."]
-visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_top = 16.0
@@ -822,7 +836,7 @@ layout_mode = 1
 offset_top = 84.0
 offset_right = 127.0
 offset_bottom = 98.0
-text = "press f to interact"
+text = "Open Window"
 label_settings = SubResource("LabelSettings_cv2on")
 horizontal_alignment = 1
 vertical_alignment = 1
@@ -879,6 +893,17 @@ material = SubResource("ShaderMaterial_7c3t2")
 offset_top = 16.0
 offset_right = 128.0
 offset_bottom = 129.0
+
+[node name="EnergyBar" type="TextureProgressBar" parent="."]
+offset_left = 8.0
+offset_top = 21.0
+offset_right = 11.0
+offset_bottom = 28.0
+value = 20.0
+fill_mode = 3
+nine_patch_stretch = true
+texture_under = SubResource("GradientTexture1D_pmfdy")
+texture_progress = SubResource("GradientTexture1D_sme7t")
 
 [connection signal="body_entered" from="DeskInteract" to="." method="_on_desk_interact_body_entered"]
 [connection signal="body_exited" from="DeskInteract" to="." method="_on_desk_interact_body_exited"]

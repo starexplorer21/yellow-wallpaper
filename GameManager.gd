@@ -34,6 +34,7 @@ func _ready():
 	$ColorRect.material.set_shader_parameter("inner_radius", 0.6)
 	$ColorRect.material.set_shader_parameter("outer_radius", 1.4)
 	$ColorRect.material.set_shader_parameter("alpha", insanity/100)
+	$EnergyBar.value = energy
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
@@ -54,9 +55,10 @@ func write():
 	var threshold = 35 + (0.65 * aggression)
 	print(roll)
 	print(threshold)
+	energy -= 75
+	$EnergyBar.value = energy
 	# if you pass the roll, then get benefits
 	if roll > threshold:
-		energy -= 75
 		insanity = max(0, insanity - 5)
 	else:
 		aggression += 2
@@ -66,10 +68,10 @@ func write():
 func door():
 	var roll = rng.randi_range(0, 100)
 	var threshold = 50
+	energy -= 100
+	$EnergyBar.value = energy
 	if roll > threshold:
-		if energy >= 100:
-			insanity = 0
-			energy -= 100
+		insanity = 0
 	else:
 		aggression += 10
 		await discovered()
@@ -78,10 +80,10 @@ func door():
 func window():
 	var roll = rng.randi_range(0, 100)
 	var threshold = 20 + (8 * aggression)
+	energy -= 25
+	$EnergyBar.value = energy
 	if roll > threshold:
-		if energy >= 25:
-			window_open = true
-			energy -= 25
+		window_open = true
 	else:
 		aggression += 1
 		await discovered()
@@ -111,11 +113,12 @@ func end_turn():
 	insanity += insanity_gain
 	
 	# reset energy
-	energy = 100
+	energy = 110
 	print(insanity)
 	
 	# lower by aggression
 	energy -= aggression * 10
+	$EnergyBar.value = energy
 	
 	# turn based aggression reduction
 	if turn_count == 4:
@@ -154,6 +157,7 @@ func _on_desk_interact_body_entered(body):
 	if body.name == "Player":
 		if energy >= 75:
 			$Interact.visible = true
+			$Interact/Label.text = "Write"
 			curobj = "desk"
 
 
@@ -166,6 +170,7 @@ func _on_desk_interact_body_exited(body):
 func _on_bed_interact_body_entered(body):
 	if body.name == "Player":
 		$Interact.visible = true
+		$Interact/Label.text = "Go To Sleep"
 		curobj = "bed"
 
 
@@ -179,6 +184,7 @@ func _on_door_interact_body_entered(body):
 	if body.name == "Player":
 		if energy >= 100:
 			$Interact.visible = true
+			$Interact/Label.text = "Go Outside"
 			curobj = "door"
 
 
@@ -192,6 +198,7 @@ func _on_window_interact_body_entered(body):
 	if body.name == "Player":
 		if energy >= 25:
 			$Interact.visible = true
+			$Interact/Label.text = "Open Window"
 			curobj = "window"
 
 
