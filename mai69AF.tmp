@@ -1,4 +1,4 @@
-[gd_scene load_steps=76 format=3 uid="uid://cu0a6oc2mchu7"]
+[gd_scene load_steps=69 format=3 uid="uid://cu0a6oc2mchu7"]
 
 [ext_resource type="Script" path="res://GameManager.gd" id="1_jhcll"]
 [ext_resource type="Texture2D" uid="uid://ctikq2bo3a64k" path="res://assets/Mystic Woods Asset Pack/tilesets/floors/wooden.png" id="1_nlnev"]
@@ -9,8 +9,6 @@
 [ext_resource type="Script" path="res://player.gd" id="6_r7iwu"]
 [ext_resource type="Texture2D" uid="uid://bhkmbegmimvw3" path="res://assets/Base Character - Free/idle.png" id="6_uhvrw"]
 [ext_resource type="Texture2D" uid="uid://83vetscnkn6" path="res://assets/Base Character - Free/walk.png" id="7_pc42o"]
-[ext_resource type="FontFile" uid="uid://f6f6d3t6o6d8" path="res://assets/Minecraftia-Regular.ttf" id="10_vkkvd"]
-[ext_resource type="Shader" path="res://vignette.gdshader" id="11_bvi4w"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_agdyp"]
 texture = ExtResource("1_nlnev")
@@ -711,37 +709,13 @@ animations = [{
 size = Vector2(13, 14)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_7ui4p"]
-size = Vector2(26, 11)
+size = Vector2(30, 15)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ujmof"]
-size = Vector2(16, 23)
+size = Vector2(20, 33)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xkx8h"]
-size = Vector2(14, 16.5)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_rwn3t"]
-size = Vector2(14, 7)
-
-[sub_resource type="LabelSettings" id="LabelSettings_cv2on"]
-line_spacing = 0.0
-font = ExtResource("10_vkkvd")
-font_size = 8
-outline_color = Color(0, 0, 0, 1)
-shadow_size = 0
-
-[sub_resource type="LabelSettings" id="LabelSettings_g5t70"]
-font = ExtResource("10_vkkvd")
-font_size = 8
-
-[sub_resource type="LabelSettings" id="LabelSettings_omvrt"]
-font = ExtResource("10_vkkvd")
-font_size = 8
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_7c3t2"]
-shader = ExtResource("11_bvi4w")
-shader_parameter/alpha = 1.0
-shader_parameter/inner_radius = 0.4
-shader_parameter/outer_radius = 1.4
+size = Vector2(14, 25)
 
 [node name="Node2D" type="Node2D"]
 script = ExtResource("1_jhcll")
@@ -759,28 +733,29 @@ tile_set = SubResource("TileSet_7diey")
 format = 2
 layer_0/tile_data = PackedInt32Array(65542, 393221, 0, 131078, 393221, 1, 196609, 524293, 2, 262145, 524293, 3, 196612, 131077, 3, 196613, 196613, 3, 65543, 458757, 1, 131079, 458757, 1, 196615, 458757, 1, 262151, 458757, 1, 65536, 458757, 0, 131072, 458757, 0, 196608, 458757, 0, 262144, 458757, 0, 327680, 458757, 0, 393216, 458757, 0, 327687, 458757, 1, 393223, 458757, 1, 458752, 262149, 0, 458753, 131077, 0, 458754, 131077, 0, 458755, 131077, 0, 458756, 131077, 0, 458757, 131077, 0, 458758, 131077, 0, 458759, 327685, 0)
 
-[node name="Player" type="CharacterBody2D" parent="."]
+[node name="CharacterBody2D" type="CharacterBody2D" parent="."]
 script = ExtResource("6_r7iwu")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="CharacterBody2D"]
 texture_filter = 1
 position = Vector2(57, 77)
 sprite_frames = SubResource("SpriteFrames_t2pe7")
 animation = &"walk_up"
 frame_progress = 0.51035
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Player"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CharacterBody2D"]
 position = Vector2(57.5, 77)
 shape = SubResource("RectangleShape2D_ohc3i")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(64, 73)
-zoom = Vector2(5, 5)
+position = Vector2(0, 16)
+anchor_mode = 0
+zoom = Vector2(9, 5.75)
 
 [node name="DeskInteract" type="Area2D" parent="."]
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="DeskInteract"]
-position = Vector2(78, 55)
+position = Vector2(78, 56.5)
 shape = SubResource("RectangleShape2D_7ui4p")
 
 [node name="BedInteract" type="Area2D" parent="."]
@@ -789,102 +764,8 @@ shape = SubResource("RectangleShape2D_7ui4p")
 position = Vector2(24, 65.5)
 shape = SubResource("RectangleShape2D_ujmof")
 
-[node name="DoorInteract" type="Area2D" parent="."]
+[node name="Area2D" type="Area2D" parent="."]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DoorInteract"]
-position = Vector2(104, 31.75)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(104, 36)
 shape = SubResource("RectangleShape2D_xkx8h")
-
-[node name="WindowInteract" type="Area2D" parent="."]
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowInteract"]
-position = Vector2(56, 37.5)
-shape = SubResource("RectangleShape2D_rwn3t")
-
-[node name="Interact" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 0
-offset_top = 16.0
-offset_right = 126.0
-offset_bottom = 128.0
-
-[node name="Panel" type="Panel" parent="Interact"]
-layout_mode = 0
-offset_left = 14.0
-offset_top = 83.0
-offset_right = 113.0
-offset_bottom = 96.0
-
-[node name="Label" type="Label" parent="Interact"]
-texture_filter = 1
-layout_mode = 1
-offset_top = 84.0
-offset_right = 127.0
-offset_bottom = 98.0
-text = "press f to interact"
-label_settings = SubResource("LabelSettings_cv2on")
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="DayEnd" type="Control" parent="."]
-visible = false
-layout_mode = 3
-anchors_preset = 0
-offset_right = 128.0
-offset_bottom = 40.0
-
-[node name="Panel" type="Panel" parent="DayEnd"]
-layout_mode = 0
-offset_top = 16.0
-offset_right = 128.0
-offset_bottom = 130.0
-
-[node name="Label" type="Label" parent="DayEnd"]
-texture_filter = 1
-layout_mode = 0
-offset_left = 17.0
-offset_top = 63.0
-offset_right = 111.0
-offset_bottom = 86.0
-text = "The Next Day Comes"
-label_settings = SubResource("LabelSettings_g5t70")
-
-[node name="Discovered" type="Control" parent="."]
-visible = false
-texture_filter = 1
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
-
-[node name="Panel" type="Panel" parent="Discovered"]
-layout_mode = 0
-offset_left = 1.0
-offset_top = 16.0
-offset_right = 127.0
-offset_bottom = 129.0
-
-[node name="Label" type="Label" parent="Discovered"]
-layout_mode = 0
-offset_left = 18.0
-offset_top = 67.0
-offset_right = 114.0
-offset_bottom = 90.0
-text = "What are you doing?"
-label_settings = SubResource("LabelSettings_omvrt")
-
-[node name="ColorRect" type="ColorRect" parent="."]
-material = SubResource("ShaderMaterial_7c3t2")
-offset_top = 16.0
-offset_right = 128.0
-offset_bottom = 129.0
-
-[connection signal="body_entered" from="DeskInteract" to="." method="_on_desk_interact_body_entered"]
-[connection signal="body_exited" from="DeskInteract" to="." method="_on_desk_interact_body_exited"]
-[connection signal="body_entered" from="BedInteract" to="." method="_on_bed_interact_body_entered"]
-[connection signal="body_exited" from="BedInteract" to="." method="_on_bed_interact_body_exited"]
-[connection signal="body_entered" from="DoorInteract" to="." method="_on_door_interact_body_entered"]
-[connection signal="body_exited" from="DoorInteract" to="." method="_on_door_interact_body_exited"]
-[connection signal="body_entered" from="WindowInteract" to="." method="_on_window_interact_body_entered"]
-[connection signal="body_exited" from="WindowInteract" to="." method="_on_window_interact_body_exited"]
