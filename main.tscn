@@ -1,4 +1,4 @@
-[gd_scene load_steps=80 format=3 uid="uid://cu0a6oc2mchu7"]
+[gd_scene load_steps=87 format=3 uid="uid://cu0a6oc2mchu7"]
 
 [ext_resource type="Script" path="res://GameManager.gd" id="1_jhcll"]
 [ext_resource type="Texture2D" uid="uid://ctikq2bo3a64k" path="res://assets/Mystic Woods Asset Pack/tilesets/floors/wooden.png" id="1_nlnev"]
@@ -11,6 +11,9 @@
 [ext_resource type="Texture2D" uid="uid://83vetscnkn6" path="res://assets/Base Character - Free/walk.png" id="7_pc42o"]
 [ext_resource type="FontFile" uid="uid://f6f6d3t6o6d8" path="res://assets/Minecraftia-Regular.ttf" id="10_vkkvd"]
 [ext_resource type="Shader" path="res://vignette.gdshader" id="11_bvi4w"]
+[ext_resource type="Texture2D" uid="uid://bshhr56m864ft" path="res://assets/end_screen.png" id="12_npmxl"]
+[ext_resource type="Script" path="res://StartScreen.gd" id="13_2fqs0"]
+[ext_resource type="LabelSettings" uid="uid://cv4ttepj2ngpy" path="res://minecraft.tres" id="13_v3ova"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_agdyp"]
 texture = ExtResource("1_nlnev")
@@ -740,7 +743,7 @@ font_size = 8
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7c3t2"]
 shader = ExtResource("11_bvi4w")
 shader_parameter/alpha = 1.0
-shader_parameter/inner_radius = 0.4
+shader_parameter/inner_radius = 0.3
 shader_parameter/outer_radius = 1.4
 
 [sub_resource type="Gradient" id="Gradient_7110u"]
@@ -758,7 +761,21 @@ colors = PackedColorArray(0, 1, 0, 1, 0, 1, 0, 1)
 gradient = SubResource("Gradient_wxhgt")
 width = 128
 
-[node name="Node2D" type="Node2D"]
+[sub_resource type="LabelSettings" id="LabelSettings_li0eu"]
+font = ExtResource("10_vkkvd")
+
+[sub_resource type="LabelSettings" id="LabelSettings_3yb7k"]
+font = ExtResource("10_vkkvd")
+
+[sub_resource type="Theme" id="Theme_dfb0j"]
+default_font = ExtResource("10_vkkvd")
+default_font_size = 8
+
+[sub_resource type="Theme" id="Theme_vau8f"]
+default_font = ExtResource("10_vkkvd")
+default_font_size = 8
+
+[node name="Main" type="Node2D"]
 script = ExtResource("1_jhcll")
 
 [node name="TileMap" type="TileMap" parent="."]
@@ -817,6 +834,7 @@ position = Vector2(56, 37.5)
 shape = SubResource("RectangleShape2D_rwn3t")
 
 [node name="Interact" type="Control" parent="."]
+visible = false
 layout_mode = 3
 anchors_preset = 0
 offset_top = 16.0
@@ -882,11 +900,13 @@ offset_bottom = 129.0
 [node name="Label" type="Label" parent="Discovered"]
 layout_mode = 0
 offset_left = 18.0
-offset_top = 67.0
+offset_top = 54.0
 offset_right = 114.0
-offset_bottom = 90.0
-text = "What are you doing?"
+offset_bottom = 101.0
+text = "What are you doing?
+You need to rest!"
 label_settings = SubResource("LabelSettings_omvrt")
+horizontal_alignment = 1
 
 [node name="ColorRect" type="ColorRect" parent="."]
 material = SubResource("ShaderMaterial_7c3t2")
@@ -895,15 +915,156 @@ offset_right = 128.0
 offset_bottom = 129.0
 
 [node name="EnergyBar" type="TextureProgressBar" parent="."]
-offset_left = 8.0
-offset_top = 21.0
-offset_right = 11.0
-offset_bottom = 28.0
+offset_left = 7.0
+offset_top = 23.0
+offset_right = 10.0
+offset_bottom = 30.0
 value = 20.0
 fill_mode = 3
 nine_patch_stretch = true
 texture_under = SubResource("GradientTexture1D_pmfdy")
 texture_progress = SubResource("GradientTexture1D_sme7t")
+
+[node name="LoseScreen" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="LoseScreen"]
+layout_mode = 0
+offset_right = 129.0
+offset_bottom = 130.0
+color = Color(0, 0, 0, 1)
+
+[node name="TextureRect" type="TextureRect" parent="LoseScreen"]
+offset_left = 10.0
+offset_top = 33.0
+offset_right = 119.0
+offset_bottom = 98.0
+texture = ExtResource("12_npmxl")
+expand_mode = 1
+
+[node name="Label" type="Label" parent="LoseScreen"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 23.0
+offset_top = 100.0
+offset_right = 105.0
+offset_bottom = 131.0
+text = "You lose"
+label_settings = SubResource("LabelSettings_li0eu")
+
+[node name="WinScreen" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ColorRect" type="ColorRect" parent="WinScreen"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 131.0
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="WinScreen"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 29.0
+offset_top = 58.0
+offset_right = 97.0
+offset_bottom = 89.0
+text = "You Win"
+label_settings = SubResource("LabelSettings_3yb7k")
+
+[node name="StartScreen" type="Node2D" parent="."]
+texture_filter = 1
+script = ExtResource("13_2fqs0")
+
+[node name="Title" type="Control" parent="StartScreen"]
+texture_filter = 1
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Panel" type="Panel" parent="StartScreen/Title"]
+layout_mode = 0
+offset_left = 9.0
+offset_top = 24.0
+offset_right = 118.0
+offset_bottom = 109.0
+
+[node name="Label" type="Label" parent="StartScreen/Title"]
+texture_filter = 1
+layout_mode = 0
+offset_left = 14.0
+offset_top = 29.0
+offset_right = 114.0
+offset_bottom = 52.0
+text = "The Yellow Wallpaper"
+label_settings = ExtResource("13_v3ova")
+
+[node name="Start" type="Button" parent="StartScreen/Title"]
+layout_mode = 0
+offset_left = 45.0
+offset_top = 62.0
+offset_right = 79.0
+offset_bottom = 84.0
+theme = SubResource("Theme_dfb0j")
+text = "Start"
+
+[node name="Background" type="Control" parent="StartScreen"]
+visible = false
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Panel" type="Panel" parent="StartScreen/Background"]
+layout_mode = 0
+offset_left = 5.0
+offset_top = 22.0
+offset_right = 123.0
+offset_bottom = 110.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="StartScreen/Background"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 43.0
+offset_right = 122.0
+offset_bottom = 103.0
+theme = SubResource("Theme_vau8f")
+bbcode_enabled = true
+text = "[center]The year is 1887 and you have just been diagnosed with temporary nervous depression.
+
+As a result, you are to sustain bedrest for the next 3 months with daily feedings of raw eggs every day. You are to refrain from any action and/or academic pursuits for a speedy recovery and to prevent relapse. 
+
+Your husband will occasionally check in to ensure that you are following the treatment. 
+
+He will progressively get more worried if he catches you being active at all. He worries greatly for you, and will check in progressively more the more you deviate from the cure.
+
+Press space to start the game[/center]"
+scroll_active = false
+visible_characters_behavior = 1
+
+[node name="Label" type="Label" parent="StartScreen/Background"]
+layout_mode = 0
+offset_left = 33.0
+offset_top = 25.0
+offset_right = 151.0
+offset_bottom = 56.0
+text = "Background"
+label_settings = ExtResource("13_v3ova")
+
+[node name="ColorRect" type="ColorRect" parent="StartScreen/Background"]
+layout_mode = 0
+offset_left = 18.0
+offset_top = 37.0
+offset_right = 109.0
+offset_bottom = 39.0
 
 [connection signal="body_entered" from="DeskInteract" to="." method="_on_desk_interact_body_entered"]
 [connection signal="body_exited" from="DeskInteract" to="." method="_on_desk_interact_body_exited"]
@@ -913,3 +1074,4 @@ texture_progress = SubResource("GradientTexture1D_sme7t")
 [connection signal="body_exited" from="DoorInteract" to="." method="_on_door_interact_body_exited"]
 [connection signal="body_entered" from="WindowInteract" to="." method="_on_window_interact_body_entered"]
 [connection signal="body_exited" from="WindowInteract" to="." method="_on_window_interact_body_exited"]
+[connection signal="pressed" from="StartScreen/Title/Start" to="StartScreen" method="_on_button_pressed"]

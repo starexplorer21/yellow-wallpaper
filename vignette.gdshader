@@ -1,7 +1,7 @@
 shader_type canvas_item;
 
 uniform float alpha = 1;
-uniform float inner_radius = 0.6;
+uniform float inner_radius = 0;
 uniform float outer_radius = 1.4;
 
 void fragment() {

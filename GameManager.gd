@@ -20,6 +20,11 @@ var curobj
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
+	pass
+	
+func init_game():
+	$Main/Player.visible = true
+	$Main/Player.can_move = true
 	aggression = 1
 	turn_count = 0
 	last_caught = 0
@@ -30,10 +35,12 @@ func _ready():
 	door_timer = 0
 	aggression_timer = 0
 	$Interact.visible = false
+	#reset game
 	curobj = "none"
-	$ColorRect.material.set_shader_parameter("inner_radius", 0.6)
+	# set vignette
+	$ColorRect.material.set_shader_parameter("inner_radius", 0.1)
 	$ColorRect.material.set_shader_parameter("outer_radius", 1.4)
-	$ColorRect.material.set_shader_parameter("alpha", insanity/100)
+	$ColorRect.material.set_shader_parameter("alpha", 0.3)
 	$EnergyBar.value = energy
 
 
@@ -53,13 +60,16 @@ func _process(delta):
 func write():
 	var roll = rng.randi_range(0, 100)
 	var threshold = 35 + (0.65 * aggression)
-	print(roll)
-	print(threshold)
 	energy -= 75
 	$EnergyBar.value = energy
+	if energy < 75:
+		$Interact.visible = false
+		curobj = "none"
+	print(energy)
 	# if you pass the roll, then get benefits
 	if roll > threshold:
-		insanity = max(0, insanity - 5)
+		insanity = max(0, insanity - 20)
+		print(insanity)
 	else:
 		aggression += 2
 		await discovered()
@@ -69,9 +79,15 @@ func door():
 	var roll = rng.randi_range(0, 100)
 	var threshold = 50
 	energy -= 100
+	if energy < 100:
+		$Interact.visible = false
+		curobj = "none"
 	$EnergyBar.value = energy
+	print(energy)
+	
 	if roll > threshold:
 		insanity = 0
+		print(insanity)
 	else:
 		aggression += 10
 		await discovered()
@@ -81,29 +97,48 @@ func window():
 	var roll = rng.randi_range(0, 100)
 	var threshold = 20 + (8 * aggression)
 	energy -= 25
+	if energy < 25:
+		$Interact.visible = false
+		curobj = "none"
 	$EnergyBar.value = energy
+	print(energy)
 	if roll > threshold:
-		window_open = true
+		window_open = !window_open
+		if window_open:
+			$Interact/Label.text = "Close Window"
+		else:
+			$Interact/Label.text = "Open Window"
+		print(insanity)
 	else:
 		aggression += 1
 		await discovered()
 		await end_turn()
 	
 func end_turn():
+	print("end turn")
+	# win and lose checking
+	if turn_count >= 30:
+		win()
+		return
+		
 	# base insanity gain
 	var insanity_gain = 5
 	# open window bonus
 	if window_open:
 		insanity_gain = 3
+		
+	# turn baesd insanity gain
+	
+	insanity_gain += turn_count/7
 	
 	# insanity gain by aggression
 	# base bonus
 	# this is basically instant kill at 10
 	# i think this introduces a strat where you 50/50 door 
 	# turn 1
-	insanity_gain += insanity * (0.14) * aggression
+	insanity_gain += (insanity/10) * (0.35) * aggression
 	# multiplier
-	insanity_gain *= 1 + (aggression * 1.3)
+	insanity_gain *= 1 + (aggression * 0.15)
 	
 	# door applies last
 	if took_door:
@@ -113,11 +148,10 @@ func end_turn():
 	insanity += insanity_gain
 	
 	# reset energy
-	energy = 110
-	print(insanity)
+	energy = 100
 	
 	# lower by aggression
-	energy -= aggression * 10
+	energy -= (aggression-1) * 5
 	$EnergyBar.value = energy
 	
 	# turn based aggression reduction
@@ -133,8 +167,13 @@ func end_turn():
 	if door_timer == 5:
 		took_door = false
 	
-	# change vignette:
-	$ColorRect.material.set_shader_parameter("alpha", insanity/100)
+	print(energy)
+	print(insanity)
+	
+	if insanity >= 100:
+		lose()
+		return
+	
 	# show the end day thing
 	turn_count += 1
 	$DayEnd.visible = true
@@ -143,6 +182,19 @@ func end_turn():
 	await get_tree().create_timer(1.0).timeout
 	$Player.can_move = true
 	$DayEnd.visible = false
+	
+	# change vignette:
+	$ColorRect.material.set_shader_parameter("alpha", insanity/100)
+	
+func lose():
+	$LoseScreen.visible = true
+	$Player.position = Vector2(0, 0)
+	$Player.can_move = false
+	
+func win():
+	$WinScreen.visible = true
+	$Player.position = Vector2(0, 0)
+	$Player.can_move = false
 	
 
 func discovered():
@@ -162,7 +214,6 @@ func _on_desk_interact_body_entered(body):
 
 
 func _on_desk_interact_body_exited(body):
-	print("bye")
 	$Interact.visible = false
 	curobj = "none"
 
@@ -175,7 +226,6 @@ func _on_bed_interact_body_entered(body):
 
 
 func _on_bed_interact_body_exited(body):
-	print("bye")
 	$Interact.visible = false
 	curobj = "none"
 
@@ -189,7 +239,6 @@ func _on_door_interact_body_entered(body):
 
 
 func _on_door_interact_body_exited(body):
-	print("bye")
 	$Interact.visible = false
 	curobj = "none"
 
@@ -198,11 +247,13 @@ func _on_window_interact_body_entered(body):
 	if body.name == "Player":
 		if energy >= 25:
 			$Interact.visible = true
-			$Interact/Label.text = "Open Window"
+			if window_open:
+				$Interact/Label.text = "Close Window"
+			else:
+				$Interact/Label.text = "Open Window"
 			curobj = "window"
 
 
 func _on_window_interact_body_exited(body):
-	print("bye")
 	$Interact.visible = false
 	curobj = "none"
