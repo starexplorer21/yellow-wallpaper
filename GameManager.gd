@@ -23,8 +23,11 @@ func _ready():
 	pass
 	
 func init_game():
-	$Main/Player.visible = true
-	$Main/Player.can_move = true
+	$LoseScreen.visible = false
+	$WinScreen.visible = false
+	$Player.visible = true
+	$Player.can_move = true
+	$EnergyBar.visible = true
 	aggression = 1
 	turn_count = 0
 	last_caught = 0
@@ -148,16 +151,22 @@ func end_turn():
 	insanity += insanity_gain
 	
 	# reset energy
-	energy = 100
-	
-	# lower by aggression
-	energy -= (aggression-1) * 5
-	$EnergyBar.value = energy
+	energy = 105
 	
 	# turn based aggression reduction
-	if turn_count == 4:
-		turn_count = 0
-		aggression = max(0, aggression - 1)
+	if last_caught >= 1:
+		last_caught += 1
+	if last_caught == 5:
+		last_caught = 0
+		if aggression > 1:
+			aggression -= 1
+
+	print(last_caught)
+	print(aggression)
+	
+	# lower by aggression
+	energy -= (aggression) * 5
+	$EnergyBar.value = energy
 		
 	# door counters
 	if took_door:
@@ -182,7 +191,7 @@ func end_turn():
 	await get_tree().create_timer(1.0).timeout
 	$Player.can_move = true
 	$DayEnd.visible = false
-	
+	print(turn_count)
 	# change vignette:
 	$ColorRect.material.set_shader_parameter("alpha", insanity/100)
 	
@@ -198,10 +207,11 @@ func win():
 	
 
 func discovered():
+	last_caught = 1
 	$Discovered.visible = true
 	$Player.position = Vector2(0, 0)
 	$Player.can_move = false
-	await get_tree().create_timer(2.0).timeout
+	await get_tree().create_timer(1.0).timeout
 	$Player.can_move = true
 	$Discovered.visible = false
 
@@ -257,3 +267,8 @@ func _on_window_interact_body_entered(body):
 func _on_window_interact_body_exited(body):
 	$Interact.visible = false
 	curobj = "none"
+
+
+func _on_button_pressed():
+	init_game()
+
