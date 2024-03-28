@@ -209,6 +209,7 @@ func win():
 func discovered():
 	last_caught = 1
 	$Discovered.visible = true
+	window_open = false
 	$Player.position = Vector2(0, 0)
 	$Player.can_move = false
 	await get_tree().create_timer(1.0).timeout
@@ -224,8 +225,9 @@ func _on_desk_interact_body_entered(body):
 
 
 func _on_desk_interact_body_exited(body):
-	$Interact.visible = false
-	curobj = "none"
+	if curobj == "desk":
+		$Interact.visible = false
+		curobj = "none"
 
 
 func _on_bed_interact_body_entered(body):
@@ -236,8 +238,9 @@ func _on_bed_interact_body_entered(body):
 
 
 func _on_bed_interact_body_exited(body):
-	$Interact.visible = false
-	curobj = "none"
+	if curobj == "bed":
+		$Interact.visible = false
+		curobj = "none"
 
 
 func _on_door_interact_body_entered(body):
@@ -249,8 +252,9 @@ func _on_door_interact_body_entered(body):
 
 
 func _on_door_interact_body_exited(body):
-	$Interact.visible = false
-	curobj = "none"
+	if curobj == "door":
+		$Interact.visible = false
+		curobj = "none"
 
 
 func _on_window_interact_body_entered(body):
@@ -265,8 +269,9 @@ func _on_window_interact_body_entered(body):
 
 
 func _on_window_interact_body_exited(body):
-	$Interact.visible = false
-	curobj = "none"
+	if curobj == "window":
+		$Interact.visible = false
+		curobj = "none"
 
 
 func _on_button_pressed():
