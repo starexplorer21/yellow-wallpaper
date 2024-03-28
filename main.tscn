@@ -14,7 +14,7 @@
 [ext_resource type="Texture2D" uid="uid://bshhr56m864ft" path="res://assets/end_screen.png" id="12_npmxl"]
 [ext_resource type="Script" path="res://StartScreen.gd" id="13_2fqs0"]
 [ext_resource type="LabelSettings" uid="uid://ck5tr8k1qs73p" path="res://minecraft.tres" id="13_v3ova"]
-[ext_resource type="Texture2D" uid="uid://c7cndfc2p43hn" path="res://assets/right-arrow-icon-clipart-transparent-background-free-free-png (1).png" id="15_3bk8g"]
+[ext_resource type="Texture2D" path="res://assets/right-arrow-icon-clipart-transparent-background-free-free-png (1).png" id="15_3bk8g"]
 [ext_resource type="Script" path="res://tutorial.gd" id="15_8f2b0"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_agdyp"]
