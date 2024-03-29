@@ -1,4 +1,4 @@
-[gd_scene load_steps=92 format=3 uid="uid://cu0a6oc2mchu7"]
+[gd_scene load_steps=94 format=3 uid="uid://cu0a6oc2mchu7"]
 
 [ext_resource type="Script" path="res://GameManager.gd" id="1_jhcll"]
 [ext_resource type="Texture2D" uid="uid://ctikq2bo3a64k" path="res://assets/Mystic Woods Asset Pack/tilesets/floors/wooden.png" id="1_nlnev"]
@@ -16,6 +16,8 @@
 [ext_resource type="LabelSettings" uid="uid://ck5tr8k1qs73p" path="res://minecraft.tres" id="13_v3ova"]
 [ext_resource type="Script" path="res://tutorial.gd" id="15_8f2b0"]
 [ext_resource type="Texture2D" uid="uid://b2c8uw75na33t" path="res://assets/arrow.png" id="16_bkhp1"]
+[ext_resource type="AudioStream" uid="uid://coh6kdfd2hmmt" path="res://assets/Background.mp3" id="17_fdp5o"]
+[ext_resource type="AudioStream" uid="uid://exobtrn1cicb" path="res://assets/whisper1.mp3" id="18_0ddiv"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_agdyp"]
 texture = ExtResource("1_nlnev")
@@ -747,6 +749,7 @@ font_size = 8
 [sub_resource type="LabelSettings" id="LabelSettings_omvrt"]
 font = ExtResource("10_vkkvd")
 font_size = 8
+font_color = Color(1, 0, 0, 1)
 
 [sub_resource type="Gradient" id="Gradient_7110u"]
 offsets = PackedFloat32Array(0, 0.776224, 1)
@@ -909,12 +912,12 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Panel" type="Panel" parent="Discovered"]
+[node name="ColorRect" type="ColorRect" parent="Discovered"]
 layout_mode = 0
-offset_left = 1.0
-offset_top = 16.0
-offset_right = 127.0
+offset_top = 15.0
+offset_right = 128.0
 offset_bottom = 129.0
+color = Color(0, 0, 0, 1)
 
 [node name="Label" type="Label" parent="Discovered"]
 layout_mode = 0
@@ -1052,12 +1055,13 @@ offset_bottom = 109.0
 [node name="Label" type="Label" parent="StartScreen/Title"]
 texture_filter = 1
 layout_mode = 0
-offset_left = 14.0
-offset_top = 29.0
-offset_right = 114.0
-offset_bottom = 52.0
-text = "The Yellow Wallpaper"
+offset_left = 13.0
+offset_top = 32.0
+offset_right = 113.0
+offset_bottom = 55.0
+text = "The              Cure"
 label_settings = ExtResource("13_v3ova")
+horizontal_alignment = 1
 
 [node name="Start" type="Button" parent="StartScreen/Title"]
 layout_mode = 0
@@ -1087,6 +1091,15 @@ offset_bottom = 111.0
 scale = Vector2(0.3, 0.3)
 theme = SubResource("Theme_h8aap")
 text = "Tutorial"
+
+[node name="GlitchText" type="Label" parent="StartScreen/Title"]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 32.0
+offset_right = 89.0
+offset_bottom = 55.0
+text = "Rest"
+label_settings = ExtResource("13_v3ova")
 
 [node name="Background" type="Control" parent="StartScreen"]
 visible = false
@@ -1376,6 +1389,18 @@ text = "That's all for the tutorial!
 label_settings = ExtResource("13_v3ova")
 autowrap_mode = 3
 
+[node name="EffectsPlayer" type="AudioStreamPlayer" parent="."]
+volume_db = 10.0
+
+[node name="Background" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("17_fdp5o")
+volume_db = -18.0
+autoplay = true
+
+[node name="WhisperPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("18_0ddiv")
+volume_db = -10.0
+
 [connection signal="body_entered" from="DeskInteract" to="." method="_on_desk_interact_body_entered"]
 [connection signal="body_exited" from="DeskInteract" to="." method="_on_desk_interact_body_exited"]
 [connection signal="body_entered" from="BedInteract" to="." method="_on_bed_interact_body_entered"]
@@ -1391,3 +1416,5 @@ autowrap_mode = 3
 [connection signal="pressed" from="StartScreen/Title/tutorial" to="StartScreen" method="_on_tutorial_pressed"]
 [connection signal="pressed" from="StartScreen/Tutorial/Right" to="StartScreen/Tutorial" method="_on_right_pressed"]
 [connection signal="pressed" from="StartScreen/Tutorial/Left" to="StartScreen/Tutorial" method="_on_left_pressed"]
+[connection signal="finished" from="Background" to="." method="_on_background_finished"]
+[connection signal="finished" from="WhisperPlayer" to="." method="_on_whisper_player_finished"]

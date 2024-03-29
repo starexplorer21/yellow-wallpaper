@@ -7,6 +7,9 @@ var background_open = false
 # check to see if we've seen tutorial
 var seen_tutorial
 
+var rng = RandomNumberGenerator.new()
+var flicker_timer = 0
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	get_node("../Player").visible = false
@@ -44,6 +47,14 @@ func load_game():
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
+	if rng.randf() > 0.90 and !background_open and flicker_timer > 100:
+		$Title/GlitchText.text = "BEST"
+		$Title/GlitchText.modulate = Color(1,0,0,1)
+		await get_tree().create_timer(0.125).timeout
+		$Title/GlitchText.text = "Rest"
+		$Title/GlitchText.modulate = Color(1,1,1,1)
+		flicker_timer = 0
+
 	if background_open:
 		if Input.is_action_just_pressed("interact"):
 			$Background.visible = false
@@ -56,7 +67,8 @@ func _physics_process(delta):
 			$Background/RichTextLabel.scroll_to_line(counter)
 		# I should write a stop, i'm also lazy. 
 		timer+=1
-		
+	
+	flicker_timer += 1
 
 
 func _on_button_pressed():

@@ -1,7 +1,7 @@
 extends Node2D
 
 # make constants
-var aggression
+var aggression = 1
 var turn_count
 var last_caught
 var insanity
@@ -10,6 +10,17 @@ var window_open
 var energy
 var door_timer
 var aggression_timer
+
+var being_caught
+var not_playing = false
+var whisper_timer = 0
+
+var door_sound = load("res://assets/door.mp3")
+var write_sound = load("res://assets/write.mp3")
+var window_open_sound = load("res://assets/window_open.mp3")
+var window_close_sound = load("res://assets/window_close.mp3")
+var bed_sound = load("res://assets/bed.mp3")
+var wake_sound = load("res://assets/wake.mp3")
 
 # rng
 var rng = RandomNumberGenerator.new()
@@ -45,10 +56,26 @@ func init_game():
 	$ColorRect.material.set_shader_parameter("outer_radius", 1.4)
 	$ColorRect.material.set_shader_parameter("alpha", 0.3)
 	$EnergyBar.value = energy
-
+	not_playing = true
+	whisper_timer = 0
+	being_caught = false
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	pass
+	
+func _physics_process(delta):
+	print(whisper_timer)
+	if not_playing && whisper_timer > (10-aggression) * 100:
+		var roll = rng.randf()
+		if !being_caught and roll < aggression / 100.0:
+			$WhisperPlayer.volume_db = -20 + aggression
+			$WhisperPlayer.play()
+			not_playing = false
+			whisper_timer = 0
+			print(whisper_timer)
+			
+		
 	if Input.is_action_just_pressed("interact"):
 		print("interacting")
 		if curobj == "desk":
@@ -58,7 +85,10 @@ func _process(delta):
 		elif curobj == "door":
 			await door()
 		elif curobj == "bed":
-			await end_turn()
+			await bed()
+	
+	if not_playing:
+		whisper_timer += 1
 	
 func write():
 	var roll = rng.randi_range(0, 100)
@@ -73,6 +103,9 @@ func write():
 	if roll > threshold:
 		insanity = max(0, insanity - 20)
 		print(insanity)
+		$EffectsPlayer.volume_db = 5
+		$EffectsPlayer.stream = write_sound
+		$EffectsPlayer.play(6)
 	else:
 		aggression += 2
 		await discovered()
@@ -91,6 +124,9 @@ func door():
 	if roll > threshold:
 		insanity = 0
 		print(insanity)
+		$EffectsPlayer.volume_db = -15
+		$EffectsPlayer.stream = door_sound
+		$EffectsPlayer.play(2)
 	else:
 		aggression += 10
 		await discovered()
@@ -108,14 +144,27 @@ func window():
 	if roll > threshold:
 		window_open = !window_open
 		if window_open:
+			$EffectsPlayer.volume_db = 5
+			$EffectsPlayer.stream = window_open_sound
+			$EffectsPlayer.play(3)
 			$Interact/Label.text = "Close Window"
 		else:
+			$EffectsPlayer.volume_db = -5
+			$EffectsPlayer.stream = window_close_sound
+			$EffectsPlayer.play(1.2)
 			$Interact/Label.text = "Open Window"
 		print(insanity)
 	else:
 		aggression += 1
 		await discovered()
 		await end_turn()
+		
+func bed():
+	# bed audio es muy malo
+	#$EffectsPlayer.volume_db = 5
+	#$EffectsPlayer.stream = bed_sound
+	#$EffectsPlayer.play(4)
+	end_turn()
 	
 func end_turn():
 	print("end turn")
@@ -184,16 +233,20 @@ func end_turn():
 		return
 	
 	# show the end day thing
+	$EffectsPlayer.stream = wake_sound
+	$EffectsPlayer.volume_db = -20
+	$EffectsPlayer.play()
 	turn_count += 1
 	$DayEnd.visible = true
 	$Player.position = Vector2(0, 0)
 	$Player.can_move = false
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(3.0).timeout
 	$Player.can_move = true
 	$DayEnd.visible = false
 	print(turn_count)
 	# change vignette:
 	$ColorRect.material.set_shader_parameter("alpha", insanity/100)
+	being_caught = false
 	
 func lose():
 	$LoseScreen.visible = true
@@ -207,14 +260,22 @@ func win():
 	
 
 func discovered():
+	being_caught = true
 	last_caught = 1
 	$Discovered.visible = true
+	$EnergyBar.visible = false
 	window_open = false
 	$Player.position = Vector2(0, 0)
 	$Player.can_move = false
-	await get_tree().create_timer(1.0).timeout
+	$EffectsPlayer.stream = door_sound
+	$EffectsPlayer.volume_db = -15
+	$EffectsPlayer.play(2)
+	$WhisperPlayer.stop()
+	not_playing = true
+	await get_tree().create_timer(2.0).timeout
 	$Player.can_move = true
 	$Discovered.visible = false
+	$EnergyBar.visible = true
 
 func _on_desk_interact_body_entered(body):
 	if body.name == "Player":
@@ -273,7 +334,14 @@ func _on_window_interact_body_exited(body):
 		$Interact.visible = false
 		curobj = "none"
 
-
+# restart script
 func _on_button_pressed():
 	init_game()
 
+
+func _on_background_finished():
+	$Background.play(0.0)
+
+
+func _on_whisper_player_finished():
+	not_playing = true
